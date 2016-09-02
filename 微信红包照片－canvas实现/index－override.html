@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>微信红包照片效果</title>
+    <style>
+    html,body{
+        height: 100%;
+    }
+    #blur-container {
+        position: relative;
+        margin: 0 auto;
+        /*width: 100%;
+        height:100%;*/
+    }
+
+    #blur-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+
+    #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    #blur-container a {
+        position: absolute;
+        z-index: 3;
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 3px;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #reset {
+        left: 50%;
+        margin-left: -120px;
+        bottom: 20px;
+        background-color: #058;
+    }
+
+    #reset:hover {
+        background-color: #047;
+    }
+
+    #show {
+        right: 50%;
+        margin-right: -120px;
+        bottom: 20px;
+        background-color: #085;
+    }
+
+    #show:hover {
+        background-color: #074;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="blur-container"></div>
+    <script>
+    (function() {
+        /*
+        封装后的
+        */
+        function blurImage(opts) {
+            this.opts = this.extend(blurImage.DEFAULTS, opts);
+            if (this.opts.imgSrc) {
+                this.createHtml()
+                    .init()
+                    .bindEvent();
+            }
+        }
+        blurImage.prototype = {
+            init: function() {
+                var opts = this.opts,
+                    dp = window.devicePixelRatio || 1,
+                    canvas = document.getElementById('canvas'),
+                    context = canvas.getContext('2d'),
+                    container = document.getElementById('blur-container');
+                // var containerWidth = window.getComputedStyle(container)['width'],
+                //     containerHeight = window.getComputedStyle(container)['height'];
+                this.cliping = {
+                    r: opts.radius * dp
+                };
+                this.dp = dp;
+                this.context = context;
+
+                canvas.style.width = opts.width + 'px';
+                canvas.style.height = opts.height + 'px';
+                canvas.width = opts.width * dp;
+                canvas.height = opts.height * dp;
+
+                var img = new Image(),
+                    _this = this;
+                img.src = 'img/food.jpg';
+                img.onload = function(e) {
+                    _this.img = img;
+                    _this.draw(true);
+                }
+                return this;
+            },
+            draw: function(random) {
+                var opts = this.opts,
+                    radius = opts.radius,
+                    context = this.context;
+                if (random) {
+                    this.cliping.x = (radius + Math.random() * (opts.width - 2 * radius)) * this.dp;
+                    this.cliping.y = (radius + Math.random() * (opts.height - 2 * radius)) * this.dp;
+                }
+                context.clearRect(0, 0, opts.width * this.dp, opts.height * this.dp);
+                context.save();
+                context.beginPath();
+                context.arc(this.cliping.x, this.cliping.y, this.cliping.r, 0, Math.PI * 2, false);
+                context.clip();
+                context.drawImage(this.img, 0, 0, opts.width * this.dp, opts.height * this.dp);
+                context.restore();
+            },
+            createHtml: function() {
+                var opts = this.opts,
+                    container = document.getElementById('blur-container'),
+                    oFragment = document.createDocumentFragment(),
+                    img = document.createElement('img'),
+                    canvas = document.createElement('canvas'),
+                    reset = document.createElement('a'),
+                    show = document.createElement('a');
+
+                container.style.width = opts.width + 'px';
+                container.style.height = opts.height + 'px';
+                img.id = 'blur-img';
+                img.style.width = opts.width + 'px';
+                img.style.height = opts.height + 'px';
+                img.style.webkitFilter = 'blur(' + opts.blur + 'px)';
+                img.style.filter = 'blur(' + opts.blur + 'px)';
+                img.src = opts.imgSrc;
+                canvas.id = 'canvas';
+                reset.id = 'reset';
+                reset.innerHTML = 'Reset';
+                show.id = 'show';
+                show.innerHTML = 'Show';
+
+                oFragment.appendChild(img);
+                oFragment.appendChild(canvas);
+                oFragment.appendChild(reset);
+                oFragment.appendChild(show);
+                container.appendChild(oFragment);
+                return this;
+            },
+            bindEvent: function() {
+                //按钮事件绑定
+                var interval;
+                var opts = this.opts,
+                    reset = document.getElementById('reset'),
+                    show = document.getElementById('show'),
+                    _this = this;
+                reset.addEventListener('click', function() {
+                    clearInterval(interval);
+                    interval=null;
+                    _this.cliping.r = opts.radius * _this.dp;
+                    _this.draw(true);
+                });
+                show.addEventListener('click', function() {
+                    if(interval) return;
+                    interval = setInterval(function() {
+                        _this.cliping.r += 30;
+                        console.log(_this.cliping.r);
+                        _this.draw();
+                        if (_this.cliping.r > 2 * _this.dp * Math.max(opts.width, opts.height)) {
+                            clearInterval(interval);
+                        }
+                    }, opts.speed);
+                });
+                return this;
+            },
+            extend: function(defaults, opts) {
+                var result = {};
+                for (var o in defaults) {
+                    if (defaults.hasOwnProperty(o)) {
+                        if (opts.hasOwnProperty(o)) {
+                            result[o] = opts[o];
+                        } else {
+                            result[o] = defaults[o];
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+        blurImage.DEFAULTS = {
+            imgSrc: '',
+            blur: 20,
+            radius: 50,
+            width: 600,
+            height: 450,
+            speed: 20
+        }
+        new blurImage({
+            imgSrc: './img/food.jpg',
+            blur: 20,
+            width: 600,
+            height: 450,
+            speed: 20
+        });
+    })();
+    </script>
+</body>
+
+</html>

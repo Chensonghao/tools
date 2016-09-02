@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    .container {
+        display: -webkit-box;
+        border: 1px solid green;
+    }
+
+    .item {
+        box-sizing: border-box;
+        height: 100px;
+    }
+
+    .it1 {
+        width: 100px;
+        background-color: red;
+    }
+
+    .it2 {
+        -webkit-box-flex: 1;
+        display: block;
+        background-color: pink;
+    }
+
+    .it3 {
+        -webkit-box-flex: 2;
+        background-color: yellow;
+    }
+
+    .container2 {
+        display: -webkit-box;
+        -webkit-box-align: center;
+        -webkit-box-pack: center;
+        border: 1px solid green;
+        height: 500px;
+    }
+
+    .it4 {
+        width: 100px;
+        height: 50px;
+        background-color: brown;
+    }
+
+    p {
+        word-break: break-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .qwe {
+        width: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="qwe">qweqweqweqweqweqweqweqweqweqweqweqwe</div>
+    <p>12312312312312312312312312312312123123123123123123123123123123123121231231231231231231231231231231231212312312312312312312312312312312312123123123123123123123123123123123121231231231231231231231231231231231212312312312312312312312312312312312123123123123123123123123123123123121231231231231231231231231231231231212312312312312312312312312312312312123123123123123123123123123123123121231231231231231231231231231231231212312312312312312312312312312312312312</p>
+    <div class="container">
+        <div class="item it1"></div>
+        <div class="item it2"></div>
+        <div class="item it3"></div>
+    </div>
+    <div class="container2">
+        <div class="item it4"></div>
+    </div>
+    <div class="container">
+        <span class="item" style="display: block;">123123123</span>
+        <span class="item it2"></span>
+    </div>
+    <ul>
+        <li style="display: -webkit-box;
+        -webkit-box-pack: justify;
+        -webkit-box-align: center;">
+            <label style="display:block">123</label>
+            <label style="display:block">123</label>
+            <label style="display:block">123</label>
+        </li>
+    </ul>
+    <div style="display: -webkit-box;
+    -webkit-box-pack: justify;
+    -webkit-box-align: center;">
+        <label style="display:inline-block">
+            123
+        </label>
+        <label style="display:inline-block">
+            123
+        </label>
+    </div>
+</body>
+
+</html>

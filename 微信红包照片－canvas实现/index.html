@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>微信红包照片效果</title>
+    <style>
+    #blur-container {
+        position: relative;
+        width: 600px;
+        height: 450px;
+        margin: 0 auto;
+    }
+    
+    #blur-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 600px;
+        height: 450px;
+        -webkit-filter: blur(20px);
+        filter: blur(20px);
+        z-index: 0;
+    }
+    
+    #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    
+    #blur-container a {
+        position: absolute;
+        z-index: 3;
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 3px;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+    }
+    
+    #reset {
+        left: 50%;
+        margin-left: -150px;
+        bottom: 20px;
+        background-color: #058;
+    }
+    
+    #reset:hover {
+        background-color: #047;
+    }
+    
+    #show {
+        right: 50%;
+        margin-right: -150px;
+        bottom: 20px;
+        background-color: #085;
+    }
+    
+    #show:hover {
+        background-color: #074;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="blur-container">
+        <img id="blur-img" src="./img/food.jpg">
+        <canvas id="canvas"></canvas>
+        <a id="reset">reset</a>
+        <a id="show">show</a>
+    </div>
+    <script>
+    (function() {
+        //画图
+        var dp = (window.devicePixelRatio || 1),
+            canvasWidth = 600,
+            canvasHeight = 450;
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        canvas.style.width = canvasWidth + 'px';
+        canvas.style.height = canvasHeight + 'px';
+        canvas.width = canvasWidth * dp;
+        canvas.height = canvasHeight * dp;
+
+        var radius = 50,
+            cliping = {};
+        var img = new Image();
+        img.src = 'img/food.jpg';
+        img.onload = function(e) {
+            init();
+        }
+
+        function init() {
+            cliping.r = radius * dp;
+            cliping.x = (radius + Math.random() * (canvasWidth - 2 * radius)) * dp;
+            cliping.y = (radius + Math.random() * (canvasHeight - 2 * radius)) * dp;
+            draw();
+        }
+
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.save();
+            setCliping();
+            context.drawImage(img, 0, 0, canvasWidth * dp, canvasHeight * dp);
+            context.restore();
+        }
+
+        function setCliping() {
+
+            context.beginPath();
+            context.arc(cliping.x, cliping.y, cliping.r, 0, Math.PI * 2, false);
+            context.clip();
+        }
+
+        //按钮事件绑定
+        var reset = document.getElementById('reset'),
+            show = document.getElementById('show');
+        reset.addEventListener('click', function() {
+            init();
+        });
+        show.addEventListener('click', function() {
+            var interval = setInterval(function() {
+                cliping.r += 30;
+                draw();
+                if (cliping.r > 2 * Math.max(canvasWidth, canvasHeight)) {
+                    clearInterval(interval);
+                }
+            }, 20);
+        });
+    })();
+    </script>
+</body>
+
+</html>
