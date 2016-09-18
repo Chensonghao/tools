@@ -43,7 +43,7 @@
       var _this = this;
       //倒计时总秒数
       var totalSeconds = opts.endDate ? (Math.floor((opts.endDate * 1 - new Date() * 1) / 1000)) : calcTotalSeconds(opts.hours, opts.minutes, opts.seconds);
-      console.log(totalSeconds);
+      totalSeconds < 0 && (totalSeconds=0);
       var last = Math.floor(new Date() * 1);
       var lastHours = [],
         lastMinutes = [],
